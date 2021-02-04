@@ -18,7 +18,6 @@ class SplashActivity : BaseActivity() {
         mSplashBinding = ActivitySplashBinding.inflate(layoutInflater)
         val view = mSplashBinding.root
         setContentView(view)
-
         addFragment(SplashFragment(), false)
     }
 }
