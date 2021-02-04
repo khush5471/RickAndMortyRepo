@@ -7,4 +7,9 @@
     <color name="light_grey">#E6DFDF</color>
     <color name="dark_grey">#AAA4A4</color>
     <color name="white">#FFFFFF</color>
+    <color name="green">#42BD0B</color>
+    <color name="red">#FF1B1B</color>
+    <color name="orange">#FF9C09</color>
+    <color name="light_blue">#B39DEF</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

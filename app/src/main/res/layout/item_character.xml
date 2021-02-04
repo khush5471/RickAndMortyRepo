@@ -1,0 +1,124 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    card_view:cardCornerRadius="10dp"
+    card_view:cardElevation="20dp"
+    card_view:contentPadding="0dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp">
+
+        <ImageView
+            android:id="@+id/imgCharacter"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:background="@color/light_blue"
+            android:padding="0dp"
+            android:scaleType="centerCrop"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_status"
+            android:fontFamily="sans-serif-condensed"
+            android:padding="10dp"
+            android:text="Alive"
+
+            android:textColor="@color/green"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtCharacterName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="start"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:text="hello"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            card_view:layout_constraintEnd_toEndOf="@id/imgCharacter"
+            card_view:layout_constraintStart_toStartOf="@id/imgCharacter"
+            card_view:layout_constraintTop_toBottomOf="@id/imgCharacter" />
+
+        <TextView
+            android:id="@+id/txtSpecies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:maxLines="2"
+            android:paddingStart="8dp"
+            android:text="@string/species"
+            android:textColor="@color/dark_grey"
+            android:textStyle="bold"
+            card_view:layout_constraintStart_toStartOf="@id/txtCharacterName"
+            card_view:layout_constraintTop_toBottomOf="@id/txtCharacterName" />
+
+        <TextView
+            android:id="@+id/txtCurrentSpecies"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:maxLines="2"
+            android:paddingStart="8dp"
+            android:text="Human"
+            android:textColor="@color/red"
+            android:textStyle="bold|italic"
+            card_view:layout_constraintBottom_toBottomOf="@id/txtSpecies"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@id/txtSpecies"
+            card_view:layout_constraintTop_toTopOf="@id/txtSpecies" />
+
+        <TextView
+            android:id="@+id/txtGender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:maxLines="2"
+            android:paddingStart="8dp"
+            android:text="@string/gender"
+            android:textColor="@color/dark_grey"
+            android:textStyle="bold"
+            card_view:layout_constraintStart_toStartOf="@id/txtCharacterName"
+            card_view:layout_constraintTop_toBottomOf="@id/txtSpecies" />
+
+        <TextView
+            android:id="@+id/txtCurrentGender"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:maxLines="2"
+            android:paddingStart="8dp"
+            android:text="Male"
+            android:textColor="@color/green"
+            android:textStyle="bold|italic"
+            card_view:layout_constraintBottom_toBottomOf="@id/txtGender"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@id/txtGender"
+            card_view:layout_constraintTop_toTopOf="@id/txtGender" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>

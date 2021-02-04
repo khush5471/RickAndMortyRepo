@@ -3,4 +3,7 @@
     <string name="character">CHARACTER</string>
     <string name="location">LOCATION</string>
     <string name="episode">EPISODE</string>
+    <string name="status">STATUS -</string>
+    <string name="gender">GENDER -</string>
+    <string name="species">SPECIES -</string>
 </resources>
