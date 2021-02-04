@@ -9,7 +9,9 @@ import com.example.rickandmorty.views.fragments.character.CharacterFragment
 import com.example.rickandmorty.views.fragments.episode.EpisodeFragment
 import com.example.rickandmorty.views.fragments.location.LocationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DashBoardActivity : BaseActivity() {
 
     private lateinit var mDashboardBinding: ActivityDashboardBinding

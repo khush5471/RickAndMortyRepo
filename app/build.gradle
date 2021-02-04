@@ -27,12 +27,36 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
+
+
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()//this dependency is used to handle no argument constructer when hilt uses viewModels()
+    }
+
+
+    //building flavors for application
+    flavorDimensions "app"
+    productFlavors{
+        dev {
+            dimension "app"
+            buildConfigField 'String', 'BASE_URL','"https://rickandmortyapi.com/api/"'
+        }
+
+    }
+
 }
 
 dependencies {
@@ -52,10 +76,33 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefresh_version"
 
     //Hilt dependicies
-    def hilt_version = '2.31.2-alpha'
+    def hilt_version = "2.31.2-alpha"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 
+
+    //Retrofit and Network stuff
+    def retrofit_version = "2.3.0"
+    def interceptor_version = "3.8.1"
+    def gson_version = "2.8.2"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$interceptor_version"
+    implementation "com.google.code.gson:gson:$gson_version"
+
+
+    //Glide
+    def glide_version = "4.12.0"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
+
+    //ViewModels
+    def viewModel_version = "1.0.0-alpha01"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$viewModel_version"
+    kapt "androidx.hilt:hilt-compiler:$viewModel_version"
+
+    implementation 'androidx.fragment:fragment-ktx:1.2.5'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
