@@ -38,6 +38,8 @@ class SplashFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        //setting the viewbinding variable to null
         mSplashFragmentBinding = null
     }
 }
