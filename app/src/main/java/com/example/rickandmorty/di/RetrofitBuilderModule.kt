@@ -1,5 +1,6 @@
 package com.example.rickandmorty.di
 
+import com.example.rickandmorty.BuildConfig
 import com.example.rickandmorty.network.WebService
 import dagger.Module
 import dagger.Provides
@@ -39,7 +40,7 @@ object RetrofitBuilderModule {
     @Singleton
     fun getRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://rickandmortyapi.com/api/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

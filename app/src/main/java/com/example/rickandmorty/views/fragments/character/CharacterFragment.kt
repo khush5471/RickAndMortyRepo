@@ -1,28 +1,32 @@
 package com.example.rickandmorty.views.fragments.character
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.databinding.FragmentCharacterBinding
-import com.example.rickandmorty.models.CharacterItem
+import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class CharacterFragment : BaseFragment() {
+class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, OnLoadMoreListner {
 
     private var mCharacterBinding: FragmentCharacterBinding? = null
     private lateinit var mCharacterAdapter: CharacterAdapter
     private lateinit var mGridLayoutManager: GridLayoutManager
-    private var mCharacterList: List<CharacterItem?>? = null
     private val mViewModel: CharacterViewModel by viewModels()
-
+    private var mCurrentPage = 1
+    private var mIsLastPage = false
+    private var mIsDataLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,41 +42,109 @@ class CharacterFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         init()
         attachObservers()
-        mViewModel.getCharcterData(1)
+        onRefresh()
     }
 
+    override fun onRefresh() {
+        if (Utils.isNetworkAvailable(context)) {
+            if (!mIsDataLoading) {
+
+                //Make this flag true so that it shows data is loading.
+                mIsDataLoading = true
+                mCurrentPage = 1
+                mCharacterBinding?.swipeRefresh?.isRefreshing = true
+                mViewModel.getCharcterData(mCurrentPage)
+            }
+        } else {
+            mCharacterBinding?.swipeRefresh?.isRefreshing = false
+            context?.let {
+                if (isVisible) {
+                    Utils.showToast(it, getString(R.string.no_internet_message))
+                }
+            }
+        }
+    }
 
     /*
     * Initializing views.
     * */
     fun init() {
 
+        mCharacterBinding?.swipeRefresh?.setOnRefreshListener(this)
+
         context?.let {
-            mCharacterAdapter = CharacterAdapter(it)
+            mCharacterAdapter = CharacterAdapter(it, this)
             mGridLayoutManager = GridLayoutManager(it, 2, GridLayoutManager.VERTICAL, false)
         }
 
         mCharacterBinding?.let {
             it.recyclerCharacters.layoutManager = mGridLayoutManager
             it.recyclerCharacters.adapter = mCharacterAdapter
+            mCharacterAdapter.setRecyclerView(mGridLayoutManager, it.recyclerCharacters)
+
         }
+
     }
 
 
     /*
-    * Attaching observers from the viewmodels to observe data
+    * Attaching observers  to observe data from the viewmodels
     * */
     fun attachObservers() {
         mViewModel.mCharacterData.observe(viewLifecycleOwner, Observer {
 
+            //if pull to refresh is loading then cancel its loader
+            mCharacterBinding?.swipeRefresh?.isRefreshing = false
+
+            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+            mIsDataLoading = false
+
+            it.info?.next.let {
+                //if the check is true it means there are no more pages to load using pagination
+                if (it == null || it.isNullOrEmpty()) {
+                    mIsLastPage = true
+                    Log.e("LAST PAGE", "FOR PAGINATION")
+                } else {
+                    mIsLastPage = false
+                }
+            }
+
             it?.let {
                 it.results?.let {
-
-                    mCharacterAdapter.setListForPullToRefresh(it)
-
+                    if (mCurrentPage == 1) {
+                        //this code will execute for pull to refresh functionality
+                        mCharacterAdapter.setListForPullToRefresh(it, mIsLastPage)
+                    } else {
+                        //this code will execute for pagination when current page value is more than 1
+                        mCharacterAdapter.addItemsForPagination(it, mIsLastPage)
+                    }
                 }
             }
         })
+    }
+
+
+    /*
+    * Will load new data by starting pagination*/
+    override fun onLoadMore() {
+
+        if (!mIsDataLoading && !mIsLastPage) {
+
+            if (Utils.isNetworkAvailable(context)) {
+                //on pagination increase the current page by 1, so that it will load next page data
+                mCurrentPage++
+
+                //Make this flag true so that it shows data is loading.
+                mIsDataLoading = true
+                mViewModel.getCharcterData(mCurrentPage)
+            } else {
+                mIsDataLoading = false
+                mCharacterAdapter.resetLoadingFlag(false)
+                context?.let {
+                    Utils.showToast(it, getString(R.string.no_internet_message))
+                }
+            }
+        }
     }
 
 
@@ -80,4 +152,6 @@ class CharacterFragment : BaseFragment() {
         super.onDestroy()
         mCharacterBinding = null
     }
+
+
 }

@@ -6,4 +6,6 @@
     <string name="status">STATUS -</string>
     <string name="gender">GENDER -</string>
     <string name="species">SPECIES -</string>
+    <string name="no_internet_message">Oops your internet is gone! Please check your internet connection.</string>
+
 </resources>

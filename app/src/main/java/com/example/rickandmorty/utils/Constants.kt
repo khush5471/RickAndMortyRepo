@@ -4,4 +4,5 @@ object Constants {
 
     const val INTENT_EXTRAS = "intent_extras"
     const val PARCEL_KEY = "parcel_key"
+    const val PAGE_SIZE = 20
 }

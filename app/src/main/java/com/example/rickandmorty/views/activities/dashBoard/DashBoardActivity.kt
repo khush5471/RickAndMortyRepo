@@ -39,6 +39,8 @@ class DashBoardActivity : BaseActivity() {
         mCustomViewPagerAdapter.addFragments(LocationFragment())
         mCustomViewPagerAdapter.addFragments(EpisodeFragment())
 
+        mDashboardBinding.dashboardViewPager.offscreenPageLimit = 3
+
         mDashboardBinding.dashboardViewPager.adapter = mCustomViewPagerAdapter
         disableViewPagerSwipe(mDashboardBinding.dashboardViewPager)
 
