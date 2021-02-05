@@ -53,7 +53,7 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, 
                 mIsDataLoading = true
                 mCurrentPage = 1
                 mCharacterBinding?.swipeRefresh?.isRefreshing = true
-                mViewModel.getCharcterData(mCurrentPage)
+                mViewModel.getdd(mCurrentPage)
             }
         } else {
             mCharacterBinding?.swipeRefresh?.isRefreshing = false

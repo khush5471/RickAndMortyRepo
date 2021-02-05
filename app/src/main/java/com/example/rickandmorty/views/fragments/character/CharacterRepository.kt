@@ -27,5 +27,11 @@ class CharacterRepository @Inject constructor(private val mService: WebService) 
             }
 
         })
+
+
     }
+
+    suspend fun getCharList(page: Int) = mService.getCharacterLists(page)
+
 }
+

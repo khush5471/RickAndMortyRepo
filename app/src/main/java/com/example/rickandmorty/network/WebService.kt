@@ -12,4 +12,9 @@ interface WebService {
     fun getCharacterList(
         @Query("page") page: Int
     ): Call<CharacterListResponse>
+
+    @GET("character")
+    suspend fun getCharacterLists(
+        @Query("page") page: Int
+    ): CharacterListResponse
 }
