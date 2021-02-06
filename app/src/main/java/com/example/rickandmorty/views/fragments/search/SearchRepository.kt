@@ -1,6 +1,6 @@
 package com.example.rickandmorty.views.fragments.search
 
-import android.util.Log
+//import com.example.rickandmorty.state.ErrorUtils.parseError
 import com.example.rickandmorty.models.CharacterListResponse
 import com.example.rickandmorty.network.ApiError
 import com.example.rickandmorty.network.WebService
@@ -10,11 +10,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
+
 class SearchRepository @Inject constructor(private val mSerVice: WebService) {
 
     private var mSearchRequest: Call<CharacterListResponse>? = null
 
 
+    /*
+    * Search with character name
+    * */
     fun searchCharacterByName(
         page: Int,
         keyword: String,
@@ -29,18 +33,20 @@ class SearchRepository @Inject constructor(private val mSerVice: WebService) {
                 call: Call<CharacterListResponse>,
                 response: Response<CharacterListResponse>
             ) {
-                if (!response.isSuccessful) {
-                    Log.e("ERRO CODES", " HANDL " + response.code() + " ++ " + response.message())
-                }
                 response.body()?.let {
                     successHandler(it)
                 } ?: Utils.handleErrorResponse(response, errorHandler)
             }
 
             override fun onFailure(call: Call<CharacterListResponse>, t: Throwable) {
+                call.let {
+                    if (!it.isCanceled) {
+                        t.message?.let {
+                            errorHandler(ApiError(it))
 
-                errorHandler(ApiError("Connection failure, Something went wrong"))
-
+                        } ?: errorHandler(ApiError("Connection failure, Something went wrong"))
+                    }
+                }
             }
         })
     }

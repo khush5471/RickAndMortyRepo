@@ -18,6 +18,9 @@ import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.activities.holder.HolderActivity
 import com.example.rickandmorty.views.fragments.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 @AndroidEntryPoint
@@ -32,11 +35,13 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
     private var mIsLastPage = false
     private var mIsDataLoading = false
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        EventBus.getDefault().register(this)
         mCharacterBinding = FragmentCharacterBinding.inflate(inflater, container, false)
         val view = mCharacterBinding?.root
         return view
@@ -198,10 +203,17 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: CharacterItem?) {
+        //getting character from search
+        getDataFromAdapter(event)
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
         mCharacterBinding = null
+        EventBus.getDefault().unregister(this)
     }
 
 

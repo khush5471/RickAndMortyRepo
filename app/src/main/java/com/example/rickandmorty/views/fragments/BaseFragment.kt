@@ -4,11 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.rickandmorty.R
 import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.views.activities.BaseActivity
+
 
 open class BaseFragment : Fragment() {
 
@@ -43,4 +46,17 @@ open class BaseFragment : Fragment() {
     fun showToast(context: Context, message: String?) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
+
+    /*
+    * Hides the keyboard.
+    * */
+    fun hideKeyBoard(view: View?) {
+        val inputManager = view?.context?.getSystemService(Context.INPUT_METHOD_SERVICE)
+        if (inputManager is InputMethodManager) {
+            inputManager.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+    }
+
+
 }

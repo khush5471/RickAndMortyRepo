@@ -30,7 +30,11 @@ class LocationRepository @Inject constructor(private val mSerVice: WebService) {
             }
 
             override fun onFailure(call: Call<LocationListResponse>, t: Throwable) {
-                errorHandler(ApiError("Connection failure, Something went wrong"))
+                t.message?.let {
+                    errorHandler(ApiError(it))
+
+                } ?: errorHandler(ApiError("Connection failure, Something went wrong"))
+
 
             }
 

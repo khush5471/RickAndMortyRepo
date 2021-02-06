@@ -18,6 +18,7 @@ import javax.inject.Singleton
 object RetrofitBuilderModule {
 
     private const val CONNECTION_TIME_OUT: Long = 60
+    private lateinit var retrofit: Retrofit
 
     @Provides
     @Singleton
@@ -39,11 +40,16 @@ object RetrofitBuilderModule {
     @Provides
     @Singleton
     fun getRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
+        return retrofit
+    }
+
+    fun getRetroInstance(): Retrofit {
+        return retrofit
     }
 
 

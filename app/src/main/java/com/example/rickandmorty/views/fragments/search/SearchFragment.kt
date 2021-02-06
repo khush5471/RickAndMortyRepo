@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -13,10 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.SearchAdapter
 import com.example.rickandmorty.databinding.FragmentSearchBinding
+import com.example.rickandmorty.models.CharacterItem
 import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.BaseFragment
 import com.example.rickandmorty.views.fragments.character.AdapterHandlerListner
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 
 @AndroidEntryPoint
 class SearchFragment : BaseFragment(), AdapterHandlerListner {
@@ -42,7 +45,7 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
         super.onViewCreated(view, savedInstanceState)
         init()
         attachObservers()
-        setEditextListner()
+        setListnerOnViews()
     }
 
     /*
@@ -63,6 +66,7 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
             mSearchAdapter.setRecyclerView(mLinearLayoutManager, it.recyclerSearch)
 
         }
+
 
     }
 
@@ -120,7 +124,10 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
         })
     }
 
-    fun setEditextListner() {
+    /*
+    * Setting listners on views.
+    * */
+    fun setListnerOnViews() {
         mBindingSearch?.edtCharName?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 Log.e("TEXT ", "ok " + s.toString())
@@ -139,6 +146,15 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
+        })
+
+
+        mBindingSearch?.recyclerSearch?.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                hideKeyBoard(v)
+                return false
+            }
+
         })
     }
 
@@ -164,5 +180,8 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
     }
 
     override fun getDataFromAdapter(obj: Any?) {
+        val character = obj as CharacterItem
+        activity?.finish()
+        EventBus.getDefault().post(character)
     }
 }

@@ -34,7 +34,10 @@ class CharacterRepository @Inject constructor(private val mService: WebService) 
             }
 
             override fun onFailure(call: Call<CharacterListResponse>, t: Throwable) {
-                errorHandler(ApiError("Connection failure, Something went wrong"))
+                t.message?.let {
+                    errorHandler(ApiError(it))
+                } ?: errorHandler(ApiError("Connection failure, Something went wrong"))
+
             }
         })
 

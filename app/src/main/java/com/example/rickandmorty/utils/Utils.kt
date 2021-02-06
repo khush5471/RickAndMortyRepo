@@ -46,6 +46,8 @@ object Utils {
     }
 
 
+    /*Handles the error response other than network.
+    * */
     fun handleErrorResponse(
         response: Response<*>?,
         errorHandler: (ApiError) -> Unit
@@ -59,14 +61,12 @@ object Utils {
     // Handling error messages returned by Apis
     fun handleApiError(body: ResponseBody?): String {
         val errorConverter: Converter<ResponseBody, Status> =
-            RetrofitBuilderModule.getRetrofit(RetrofitBuilderModule.getOkHttpClient())
+            RetrofitBuilderModule.getRetroInstance()
                 .responseBodyConverter(Status::class.java, arrayOfNulls(0))
         try {
             errorConverter.convert(body)?.let {
-
                 val error: Status = it
                 return error.message
-
             }
             return "Api error"
         } catch (e: Exception) {
@@ -76,4 +76,6 @@ object Utils {
 
 
     }
+
+
 }

@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class Status(
     @SerializedName("status")
     val status: Int,
-    @SerializedName("message")
+    @SerializedName("error")
     val message: String
 )

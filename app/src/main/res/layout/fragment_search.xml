@@ -12,6 +12,7 @@
         android:background="@drawable/bg_edittext"
         android:hint="@string/search_by_name"
         android:padding="10dp"
+        android:focusable="true"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
