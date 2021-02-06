@@ -30,6 +30,7 @@ class SplashFragment : BaseFragment() {
         Handler().postDelayed(object : Runnable {
             override fun run() {
                 startActivityFromFragment(activity, DashBoardActivity::class.java, null, true)
+//                startActivityFromFragment(activity, TestRoomActivity::class.java, null, true)
                 activity?.finish()
             }
         }, 3000)

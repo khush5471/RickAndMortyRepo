@@ -7,5 +7,12 @@
     <string name="gender">GENDER -</string>
     <string name="species">SPECIES -</string>
     <string name="no_internet_message">Oops your internet is gone! Please check your internet connection.</string>
+    <string name="name">NAME -</string>
+    <string name="type">TYPE -</string>
+    <string name="dimension">DIMENSION</string>
+    <string name="date">DATE -</string>
+    <string name="episode_">EPISODE -</string>
+    <string name="origin">ORIGIN -</string>
+    <string name="location_">LOCATION -</string>
 
 </resources>

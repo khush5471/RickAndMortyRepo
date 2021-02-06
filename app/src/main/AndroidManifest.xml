@@ -23,6 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Test.TestRoomActivity" />
+        <activity android:name=".views.activities.holder.HolderActivity" />
     </application>
 
 </manifest>

@@ -12,13 +12,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.databinding.FragmentCharacterBinding
+import com.example.rickandmorty.models.CharacterItem
+import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.utils.Utils
+import com.example.rickandmorty.views.activities.holder.HolderActivity
 import com.example.rickandmorty.views.fragments.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, OnLoadMoreListner {
+class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
+    AdapterHandlerListner {
 
     private var mCharacterBinding: FragmentCharacterBinding? = null
     private lateinit var mCharacterAdapter: CharacterAdapter
@@ -53,7 +57,7 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, 
                 mIsDataLoading = true
                 mCurrentPage = 1
                 mCharacterBinding?.swipeRefresh?.isRefreshing = true
-                mViewModel.getdd(mCurrentPage)
+                mViewModel.getCharacterListData(mCurrentPage)
             }
         } else {
             mCharacterBinding?.swipeRefresh?.isRefreshing = false
@@ -121,6 +125,27 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, 
                 }
             }
         })
+
+        mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
+            //if pull to refresh is loading then cancel its loader
+            mCharacterBinding?.swipeRefresh?.isRefreshing = false
+
+            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+            mIsDataLoading = false
+
+            /*
+           * as error is occured so we must decrement the page count by one,because it was incremented ,and we have
+           * not got the result yet, so to start the same api again we must decerement the page variable
+           */
+            mCurrentPage--
+
+            it?.apply {
+                context?.let {
+                    Utils.showToast(it, this.errorMessage)
+                }
+            }
+
+        })
     }
 
 
@@ -136,7 +161,7 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, 
 
                 //Make this flag true so that it shows data is loading.
                 mIsDataLoading = true
-                mViewModel.getCharcterData(mCurrentPage)
+                mViewModel.getCharacterListData(mCurrentPage)
             } else {
                 mIsDataLoading = false
                 mCharacterAdapter.resetLoadingFlag(false)
@@ -145,6 +170,16 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, 
                 }
             }
         }
+    }
+
+    override fun getDataFromAdapter(obj: Any?) {
+
+        val charObj = obj as CharacterItem
+        val bundle = Bundle()
+        bundle.putParcelable(Constants.PARCEL_DATA, charObj)
+        bundle.putInt(Constants.PARCEL_KEY, Constants.CHARCTER_DETAIL)
+        startActivityFromFragment(activity, HolderActivity::class.java, bundle, false)
+
     }
 
 

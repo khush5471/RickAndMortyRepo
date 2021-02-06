@@ -3,23 +3,21 @@ package com.example.rickandmorty.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.rickandmorty.databinding.ItemCharacterBinding
-import com.example.rickandmorty.models.CharacterItem
+import com.example.rickandmorty.databinding.ItemEpisodeBinding
+import com.example.rickandmorty.models.ResultsEpisodeItem
 import com.example.rickandmorty.utils.Constants
-import com.example.rickandmorty.utils.MulticlickHandler
-import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.character.AdapterHandlerListner
 
 
 /*
 * Adapter for showing Character list
 * */
-class CharacterAdapter(private val mContext: Context, private val mListner: AdapterHandlerListner) :
-    RecyclerView.Adapter<CharacterAdapter.MyViewHolder>() {
+class EpisodeAdapter(private val mContext: Context, private val mListner: AdapterHandlerListner) :
+    RecyclerView.Adapter<EpisodeAdapter.MyViewHolder>() {
 
-    private val mCharacterList = ArrayList<CharacterItem?>()
+    private val mEpisodeList = ArrayList<ResultsEpisodeItem?>()
     private var mIsMoreLoading: Boolean = false
     private var mFirstVisibleItem: Int = 0
     private var mVisibleItemCount: Int = 0
@@ -27,26 +25,21 @@ class CharacterAdapter(private val mContext: Context, private val mListner: Adap
     private var mIsLastPage: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val binding = ItemCharacterBinding.inflate(LayoutInflater.from(mContext), parent, false)
+        val binding = ItemEpisodeBinding.inflate(LayoutInflater.from(mContext), parent, false)
         return MyViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
-        return mCharacterList.size
+        return mEpisodeList.size
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
         with(holder) {
-            with(mCharacterList[position]) {
-                binding.txtCharacterName.text = this?.name
-                binding.txtStatus.text = this?.status
-                binding.txtCurrentSpecies.text = this?.species
-                binding.txtCurrentGender.text = this?.gender
-                this?.image?.let {
-                    Utils.downloadImageByGlide(mContext, it, binding.imgCharacter)
-                }
-
+            with(mEpisodeList[position]) {
+                binding.txtEpisodeName.text = this?.name
+                binding.txtEpisodeDate.text = this?.airDate
+                binding.txtEpisodeNumber.text = this?.episode
             }
         }
     }
@@ -54,16 +47,16 @@ class CharacterAdapter(private val mContext: Context, private val mListner: Adap
 
     /*
     * Setting recyclerview pagination*/
-    fun setRecyclerView(gridLayoutManager: GridLayoutManager, recyclerView: RecyclerView) {
+    fun setRecyclerView(linearLayoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
 
-                    mVisibleItemCount = gridLayoutManager.childCount
-                    mTotalItemCount = gridLayoutManager.itemCount
-                    mFirstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition()
+                    mVisibleItemCount = linearLayoutManager.childCount
+                    mTotalItemCount = linearLayoutManager.itemCount
+                    mFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
                     //If the recycler is not Loading and data is not of the end page then
                     //trigger the LoadMore event
                     if (!mIsMoreLoading && !mIsLastPage) {
@@ -85,10 +78,10 @@ class CharacterAdapter(private val mContext: Context, private val mListner: Adap
 
     /*
    * For setting pull to refresh items in adapter*/
-    fun setListForPullToRefresh(List: List<CharacterItem?>, isLastPage: Boolean) {
+    fun setListForPullToRefresh(List: List<ResultsEpisodeItem?>, isLastPage: Boolean) {
 
-        mCharacterList.clear()
-        mCharacterList.addAll(List)
+        mEpisodeList.clear()
+        mEpisodeList.addAll(List)
         notifyDataSetChanged()
         mIsMoreLoading = false
         mIsLastPage = isLastPage
@@ -97,9 +90,9 @@ class CharacterAdapter(private val mContext: Context, private val mListner: Adap
 
     /*
     * For setting pagination items in adapter*/
-    fun addItemsForPagination(list: List<CharacterItem?>, isLastPage: Boolean) {
+    fun addItemsForPagination(list: List<ResultsEpisodeItem?>, isLastPage: Boolean) {
 
-        mCharacterList.addAll(list)
+        mEpisodeList.addAll(list)
         notifyDataSetChanged()
         mIsMoreLoading = false
         mIsLastPage = isLastPage
@@ -115,14 +108,10 @@ class CharacterAdapter(private val mContext: Context, private val mListner: Adap
         mIsMoreLoading = changeState
     }
 
-    inner class MyViewHolder(val binding: ItemCharacterBinding) :
+    inner class MyViewHolder(val binding: ItemEpisodeBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
 
-            binding.root.setOnClickListener {
-                if (MulticlickHandler.singleClick())
-                    mListner.getDataFromAdapter(mCharacterList[adapterPosition])
-            }
         }
     }
 }

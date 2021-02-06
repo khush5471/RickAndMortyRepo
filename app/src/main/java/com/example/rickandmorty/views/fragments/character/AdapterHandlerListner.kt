@@ -1,8 +1,6 @@
 package com.example.rickandmorty.views.fragments.character
 
-interface OnLoadMoreListner {
+interface AdapterHandlerListner {
     fun onLoadMore()
-    fun onListEmpty() {
-
-    }
+    fun getDataFromAdapter(obj: Any?)
 }

@@ -42,7 +42,16 @@ object Utils {
 
 
     /* Shows toast.*/
-    fun showToast(context: Context, message: String) {
+    fun showToast(context: Context, message: String?) {
+//        val mToast=Toast(context)
+//        mToast.cancel()
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+
+
+//        val mToast=Toast.makeText(context,null,Toast.LENGTH_SHORT)
+//        mToast.cancel()
+//        mToast.setText(message)
+//        mToast.duration=Toast.LENGTH_SHORT
+//        mToast.show();
     }
 }
