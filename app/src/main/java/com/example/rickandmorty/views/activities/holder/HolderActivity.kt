@@ -8,6 +8,11 @@ import com.example.rickandmorty.views.fragments.character.CharacterDetailFragmen
 import com.example.rickandmorty.views.fragments.search.SearchFragment
 import dagger.hilt.android.AndroidEntryPoint
 
+
+/*
+* This activities handles is used for handling fragment transaction
+*  request from other activities
+* */
 @AndroidEntryPoint
 class HolderActivity : BaseActivity() {
 
@@ -19,6 +24,9 @@ class HolderActivity : BaseActivity() {
         redirectToRequestedFragment(mBundel.getInt(Constants.PARCEL_KEY), mBundel)
     }
 
+    /*
+    * On basis of payload from the bundle, redirect it to theis respective fragments.
+    * */
     fun redirectToRequestedFragment(type: Int, bundle: Bundle) {
 
         when (type) {

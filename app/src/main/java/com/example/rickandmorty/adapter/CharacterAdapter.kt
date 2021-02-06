@@ -3,8 +3,10 @@ package com.example.rickandmorty.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.ItemCharacterBinding
 import com.example.rickandmorty.models.CharacterItem
 import com.example.rickandmorty.utils.Constants
@@ -44,7 +46,12 @@ class CharacterAdapter(private val mContext: Context, private val mListner: Adap
                 binding.txtCurrentSpecies.text = this?.species
                 binding.txtCurrentGender.text = this?.gender
                 this?.image?.let {
-                    Utils.downloadImageByGlide(mContext, it, binding.imgCharacter)
+                    Utils.downloadImageByGlide(
+                        mContext, it, binding.imgCharacter, ContextCompat.getDrawable(
+                            mContext,
+                            R.drawable.bg_grey
+                        )
+                    )
                 }
 
             }

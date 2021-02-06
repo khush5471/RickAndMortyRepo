@@ -48,6 +48,8 @@ object RetrofitBuilderModule {
         return retrofit
     }
 
+    /*Gives the retrofit instance.
+    * */
     fun getRetroInstance(): Retrofit {
         return retrofit
     }

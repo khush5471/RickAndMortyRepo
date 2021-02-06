@@ -11,6 +11,10 @@ import javax.inject.Inject
 
 class LocationRepository @Inject constructor(private val mSerVice: WebService) {
 
+
+    /*
+    * Get location list from the api.
+    * */
     fun getLocationList(
         page: Int,
         successHandler: (LocationListResponse) -> Unit,

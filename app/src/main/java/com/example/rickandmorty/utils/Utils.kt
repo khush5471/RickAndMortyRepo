@@ -1,6 +1,7 @@
 package com.example.rickandmorty.utils
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.ImageView
@@ -15,14 +16,17 @@ import retrofit2.Response
 
 object Utils {
 
-    fun downloadImageByGlide(context: Context, url: String?, imageView: ImageView) {
+    fun downloadImageByGlide(
+        context: Context,
+        url: String?,
+        imageView: ImageView,
+        placeHolder: Drawable?
+    ) {
         if (!url.isNullOrEmpty()) {
             Glide.with(context)
                 .load(url)
-//                    .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-//                .placeholder(placeHolder)
-//                    .thumbnail(0.01f)
+                .placeholder(placeHolder)
                 .into(imageView)
         } else {
             Log.e("URL", "EMPTY")

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.FragmentCharacterDetailBinding
 import com.example.rickandmorty.models.CharacterItem
@@ -11,6 +12,9 @@ import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.BaseFragment
 
+/*
+* Shows the character data from character list and search character lsit.
+* */
 class CharacterDetailFragment : BaseFragment() {
 
 
@@ -37,12 +41,11 @@ class CharacterDetailFragment : BaseFragment() {
 
         mBinding?.imgBack?.setOnClickListener { clickHandlers(it) }
 
-
     }
 
     /*
     * Setting data from bundle into views*/
-    fun setDataInViews() {
+    private fun setDataInViews() {
 
         mBinding?.txtCharName?.text = mCharacterData?.name
         mBinding?.txtCharSpecies?.text = mCharacterData?.species
@@ -51,17 +54,21 @@ class CharacterDetailFragment : BaseFragment() {
         mBinding?.txtCharLocation?.text = mCharacterData?.location?.name
         mBinding?.txtCharOrigin?.text = mCharacterData?.origin?.name
         context?.apply {
-
             mBinding?.let {
-
-                Utils.downloadImageByGlide(this, mCharacterData?.image, it.imgCharacter)
+                Utils.downloadImageByGlide(
+                    this, mCharacterData?.image, it.imgCharacter,
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.bg_grey
+                    )
+                )
             }
         }
     }
 
     /*
     * Handles the click events*/
-    fun clickHandlers(view: View) {
+    private fun clickHandlers(view: View) {
         when (view.id) {
             R.id.imgBack -> {
                 activity?.onBackPressed()

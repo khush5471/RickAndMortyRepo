@@ -15,5 +15,8 @@
     <string name="origin">ORIGIN -</string>
     <string name="location_">LOCATION -</string>
     <string name="search_by_name">Search by Name</string>
+    <string name="rick_and_morty">Rick And Morty</string>
+    <string name="no_data_found">No Data Found</string>
+    <string name="details">DETAILS</string>
 
 </resources>

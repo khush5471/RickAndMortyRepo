@@ -9,7 +9,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-
+/*
+* Repositotry to handel character related API*/
 class CharacterRepository @Inject constructor(private val mService: WebService) {
 
     /*

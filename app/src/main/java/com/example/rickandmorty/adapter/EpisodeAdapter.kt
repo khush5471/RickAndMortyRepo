@@ -12,7 +12,7 @@ import com.example.rickandmorty.views.fragments.character.AdapterHandlerListner
 
 
 /*
-* Adapter for showing Character list
+* Adapter for showing Episode list
 * */
 class EpisodeAdapter(private val mContext: Context, private val mListner: AdapterHandlerListner) :
     RecyclerView.Adapter<EpisodeAdapter.MyViewHolder>() {

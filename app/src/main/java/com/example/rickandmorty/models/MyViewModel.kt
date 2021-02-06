@@ -1,11 +1,11 @@
-package com.example.rickandmorty.utils
+package com.example.rickandmorty.models
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.rickandmorty.network.ApiError
 
 open class MyViewModel : ViewModel() {
-    var apiError = MutableLiveData<ApiError>()
+    var mApiError = MutableLiveData<ApiError>()
 
     var isLoading = MutableLiveData<Boolean>()
 

@@ -11,6 +11,13 @@ import com.example.rickandmorty.views.fragments.location.LocationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
+
+/*
+* Dashboard activity handles viewpager and BottomNavigation
+*
+* NOTE - USING VIEWPAGER SO THAT ALL SCREEN CAN GET DATA AT ONCE AND CAN BE SEEN ON ALL FRAGMENTS
+* WITHOUT RELOADING AGAIN AND AGAIN WHILE VISITING.
+* */
 @AndroidEntryPoint
 class DashBoardActivity : BaseActivity() {
 
@@ -32,15 +39,13 @@ class DashBoardActivity : BaseActivity() {
     /*
     * This function is used for initializing and for setting the views.
     * */
-    fun init() {
+    private fun init() {
 
         mCustomViewPagerAdapter = CustomViewpagerAdapter(supportFragmentManager)
         mCustomViewPagerAdapter.addFragments(CharacterFragment())
         mCustomViewPagerAdapter.addFragments(LocationFragment())
         mCustomViewPagerAdapter.addFragments(EpisodeFragment())
-
         mDashboardBinding.dashboardViewPager.offscreenPageLimit = 3
-
         mDashboardBinding.dashboardViewPager.adapter = mCustomViewPagerAdapter
         disableViewPagerSwipe(mDashboardBinding.dashboardViewPager)
 
@@ -50,7 +55,7 @@ class DashBoardActivity : BaseActivity() {
     /*
     * This function attach the bottom navigation click with the non-swipable viewpager.
     * */
-    fun attachBottomNavigationWithViewPager() {
+    private fun attachBottomNavigationWithViewPager() {
         mDashboardBinding.bottomView.setOnNavigationItemSelectedListener(object :
             BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {

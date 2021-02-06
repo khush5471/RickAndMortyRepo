@@ -9,9 +9,14 @@ import com.example.rickandmorty.DashBoardActivity
 import com.example.rickandmorty.databinding.FragmentSplashBinding
 import com.example.rickandmorty.views.fragments.BaseFragment
 
+/*
+* Splash screen just shows splash UI for 3 seconds.*/
 class SplashFragment : BaseFragment() {
 
     private var mSplashFragmentBinding: FragmentSplashBinding? = null
+    private val mHandler = Handler()
+    private val mRunnable = Runnable { startNextActivity() }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,20 +32,24 @@ class SplashFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Handler().postDelayed(object : Runnable {
-            override fun run() {
-                startActivityFromFragment(activity, DashBoardActivity::class.java, null, true)
-//                startActivityFromFragment(activity, TestRoomActivity::class.java, null, true)
-                activity?.finish()
-            }
-        }, 3000)
+        mHandler.postDelayed(mRunnable, 3000)
 
+    }
+
+    /*
+    * Starts the next activity after splash
+    * */
+    private fun startNextActivity() {
+        startActivityFromFragment(activity, DashBoardActivity::class.java, null, true)
+        activity?.finish()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
         //setting the viewbinding variable to null
         mSplashFragmentBinding = null
+        mHandler.removeCallbacks(
+            mRunnable
+        )
     }
 }

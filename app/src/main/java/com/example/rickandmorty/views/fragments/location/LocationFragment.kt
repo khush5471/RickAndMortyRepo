@@ -12,6 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.LocationAdapter
 import com.example.rickandmorty.databinding.FragmentLocationBinding
+import com.example.rickandmorty.models.LocationListResponse
 import com.example.rickandmorty.models.ResultsLocationItem
 import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.BaseFragment
@@ -71,9 +72,9 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     /*
-   * Initializing views.
+   * Initializing views and setting recyclerview adapter.
    * */
-    fun init() {
+    private fun init() {
 
         mLocationBinding?.swipeRefreshLocation?.setOnRefreshListener(this)
 
@@ -95,36 +96,9 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
     /*
    * Attaching observers  to observe data from the viewmodels
    * */
-    fun attachObservers() {
+    private fun attachObservers() {
         mViewModel.mLocationData.observe(viewLifecycleOwner, Observer {
-
-            //if pull to refresh is loading then cancel its loader
-            mLocationBinding?.swipeRefreshLocation?.isRefreshing = false
-
-            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
-            mIsDataLoading = false
-
-            it.info?.next.let {
-                //if the check is true it means there are no more pages to load using pagination
-                if (it == null || it.isNullOrEmpty()) {
-                    mIsLastPage = true
-                    Log.e("LAST PAGE", "FOR PAGINATION")
-                } else {
-                    mIsLastPage = false
-                }
-            }
-
-            it?.let {
-                it.results?.let {
-                    if (mCurrentPage == 1) {
-                        //this code will execute for pull to refresh functionality
-                        mLocationAdapter.setListForPullToRefresh(it, mIsLastPage)
-                    } else {
-                        //this code will execute for pagination when current page value is more than 1
-                        mLocationAdapter.addItemsForPagination(it, mIsLastPage)
-                    }
-                }
-            }
+            HandleSuccesApiData(it)
         })
 
         mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
@@ -135,8 +109,53 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     /*
+  * Handles the succes data from the api and loads the Location list from api
+  * into the recyclerview adapter.
+  * */
+    private fun HandleSuccesApiData(data: LocationListResponse?) {
+
+        //if pull to refresh is loading then cancel its loader
+        mLocationBinding?.swipeRefreshLocation?.isRefreshing = false
+
+        //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+        mIsDataLoading = false
+
+        data?.info?.next.let {
+            //if the check is true it means there are no more pages to load using pagination
+            if (it == null || it.isNullOrEmpty()) {
+                mIsLastPage = true
+                Log.e("LAST PAGE", "FOR PAGINATION")
+            } else {
+                mIsLastPage = false
+            }
+        }
+
+        data?.let {
+            it.results?.let {
+                if (mCurrentPage == 1) {
+
+                    /*
+                   * On first time loading of data if there is any empty list then make no data available text visible else hide.
+                   * */
+                    if (it.isEmpty()) {
+                        mLocationBinding?.txtError?.visibility = View.VISIBLE
+                    } else {
+                        mLocationBinding?.txtError?.visibility = View.GONE
+                    }
+
+                    //this code will execute for pull to refresh functionality
+                    mLocationAdapter.setListForPullToRefresh(it, mIsLastPage)
+                } else {
+                    //this code will execute for pagination when current page value is more than 1
+                    mLocationAdapter.addItemsForPagination(it, mIsLastPage)
+                }
+            }
+        }
+    }
+
+    /*
    * Shows the error from API and Networks*/
-    fun handleErrorState(errorMessage: String) {
+    private fun handleErrorState(errorMessage: String) {
         //if pull to refresh is loading then cancel its loader
         mLocationBinding?.swipeRefreshLocation?.isRefreshing = false
 
@@ -149,11 +168,10 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         */
         mCurrentPage--
 
+        mLocationAdapter.resetLoadingFlag(false)
 
         context?.let {
             showToast(it, errorMessage)
-
-
         }
     }
 
@@ -178,10 +196,11 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         }
     }
 
+    /*
+    * Recives the click item from the adapter view and then redirect it to their respective fragment.
+    * */
     override fun getDataFromAdapter(obj: Any?) {
-
         val charObj = obj as ResultsLocationItem
-
     }
 
     override fun onDestroyView() {

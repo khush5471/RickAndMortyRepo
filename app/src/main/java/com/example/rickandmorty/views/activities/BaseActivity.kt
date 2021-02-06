@@ -8,6 +8,10 @@ import androidx.viewpager.widget.ViewPager
 import com.example.rickandmorty.R
 import com.example.rickandmorty.views.fragments.BaseFragment
 
+/*
+* BaseActivity is used so that it can be extended by all activities and common methods are putted here
+* when can be inherited by all its child classes.
+* */
 open class BaseActivity : AppCompatActivity() {
 
     /*

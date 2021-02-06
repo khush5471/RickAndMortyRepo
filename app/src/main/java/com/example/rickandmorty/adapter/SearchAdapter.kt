@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.rickandmorty.databinding.ItemCharacterBinding
+import com.example.rickandmorty.databinding.ItemSearchBinding
 import com.example.rickandmorty.models.CharacterItem
 import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.utils.MulticlickHandler
-import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.character.AdapterHandlerListner
 
 
 /*
-* Adapter for showing Character list
+* Adapter for showing Search Character list
 * */
 class SearchAdapter(private val mContext: Context, private val mListner: AdapterHandlerListner) :
     RecyclerView.Adapter<SearchAdapter.MyViewHolder>() {
@@ -27,7 +26,7 @@ class SearchAdapter(private val mContext: Context, private val mListner: Adapter
     private var mIsLastPage: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val binding = ItemCharacterBinding.inflate(LayoutInflater.from(mContext), parent, false)
+        val binding = ItemSearchBinding.inflate(LayoutInflater.from(mContext), parent, false)
         return MyViewHolder(binding)
     }
 
@@ -39,13 +38,7 @@ class SearchAdapter(private val mContext: Context, private val mListner: Adapter
 
         with(holder) {
             with(mCharacterList[position]) {
-                binding.txtCharacterName.text = this?.name
-                binding.txtStatus.text = this?.status
-                binding.txtCurrentSpecies.text = this?.species
-                binding.txtCurrentGender.text = this?.gender
-                this?.image?.let {
-                    Utils.downloadImageByGlide(mContext, it, binding.imgCharacter)
-                }
+                binding.txtSearch.text = this?.name
 
             }
         }
@@ -125,7 +118,7 @@ class SearchAdapter(private val mContext: Context, private val mListner: Adapter
         mIsMoreLoading = changeState
     }
 
-    inner class MyViewHolder(val binding: ItemCharacterBinding) :
+    inner class MyViewHolder(val binding: ItemSearchBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
 

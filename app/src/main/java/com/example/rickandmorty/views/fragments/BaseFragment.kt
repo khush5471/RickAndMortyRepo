@@ -12,10 +12,15 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.views.activities.BaseActivity
 
-
+/*
+* Base fragment , use to be extended by all the fragments and contains the common methods
+* which can be used by all hchild classes*/
 open class BaseFragment : Fragment() {
 
 
+    /*
+    * Use to start the activity from the fragment.
+    * */
     fun startActivityFromFragment(
         activityContext: Activity?,
         activity: Class<out BaseActivity>,
@@ -40,6 +45,33 @@ open class BaseFragment : Fragment() {
                 )
             }
         }
+    }
+
+    /*
+    * Attach the fragment in stack.
+    * */
+    fun attachFragment(fragment: BaseFragment, addToBackStack: Boolean) {
+
+        val tag: String = fragment::class.java.simpleName
+        activity?.let {
+            val manager = it.supportFragmentManager
+            val oldFragmentObject = manager.findFragmentByTag(tag)
+            val transaction = manager.beginTransaction()
+            transaction.setCustomAnimations(
+                R.anim.anim_in,
+                R.anim.anim_out,
+                R.anim.anim_in_reverse,
+                R.anim.anim_out_reverse
+            )
+            if (addToBackStack) {
+                transaction.addToBackStack(tag)
+            }
+
+            transaction.add(R.id.container, fragment, tag)
+                .commitAllowingStateLoss()
+        }
+
+
     }
 
     /* Shows toast.*/

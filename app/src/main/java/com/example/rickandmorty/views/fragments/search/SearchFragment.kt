@@ -15,12 +15,16 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.SearchAdapter
 import com.example.rickandmorty.databinding.FragmentSearchBinding
 import com.example.rickandmorty.models.CharacterItem
+import com.example.rickandmorty.models.CharacterListResponse
+import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.BaseFragment
 import com.example.rickandmorty.views.fragments.character.AdapterHandlerListner
+import com.example.rickandmorty.views.fragments.character.CharacterDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
-import org.greenrobot.eventbus.EventBus
 
+/*
+* This fragments manages searching characters on basis of name and renders Character list UI through API.*/
 @AndroidEntryPoint
 class SearchFragment : BaseFragment(), AdapterHandlerListner {
 
@@ -44,14 +48,14 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
-        attachObservers()
         setListnerOnViews()
+        attachObservers()
     }
 
     /*
-   * Initializing views.
+   * Initializing views and setting recycler adapter
    * */
-    fun init() {
+    private fun init() {
 
 
         context?.let {
@@ -70,64 +74,13 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
 
     }
 
-    /*
-    * Attaching observers  to observe data from the viewmodels
-    * */
-    fun attachObservers() {
-        mViewModel.mSearchList.observe(viewLifecycleOwner, Observer {
-
-
-            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
-            mIsDataLoading = false
-
-            it.info?.next.let {
-                //if the check is true it means there are no more pages to load using pagination
-                if (it == null || it.isNullOrEmpty()) {
-                    mIsLastPage = true
-                    Log.e("LAST PAGE", "FOR PAGINATION")
-                } else {
-                    mIsLastPage = false
-                }
-            }
-
-            it?.let {
-                it.results?.let {
-                    if (mCurrentPage == 1) {
-                        //this code will execute for pull to refresh functionality
-                        mSearchAdapter.setListForPullToRefresh(it, mIsLastPage)
-                    } else {
-                        //this code will execute for pagination when current page value is more than 1
-                        mSearchAdapter.addItemsForPagination(it, mIsLastPage)
-                    }
-                }
-            }
-        })
-
-        mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
-
-
-            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
-            mIsDataLoading = false
-
-            /*
-           * as error is occured so we must decrement the page count by one,because it was incremented ,and we have
-           * not got the result yet, so to start the same api again we must decerement the page variable
-           */
-            mCurrentPage--
-
-            it?.apply {
-                context?.let {
-                    showToast(it, this.errorMessage)
-                }
-            }
-
-        })
-    }
 
     /*
-    * Setting listners on views.
+    * Setting listners on views and manages edittext textwatcher to handle search character .
     * */
-    fun setListnerOnViews() {
+    private fun setListnerOnViews() {
+
+
         mBindingSearch?.edtCharName?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 Log.e("TEXT ", "ok " + s.toString())
@@ -149,6 +102,9 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
         })
 
 
+        /*
+        * Handles the hide of keyboard on scroll of recyclerview list.
+        * */
         mBindingSearch?.recyclerSearch?.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 hideKeyBoard(v)
@@ -156,6 +112,93 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
             }
 
         })
+
+        mBindingSearch?.imgBack?.setOnClickListener {
+            activity?.onBackPressed()
+        }
+    }
+
+
+    /*
+    * Attaching observers  to observe data from the viewmodels
+    * */
+    private fun attachObservers() {
+        mViewModel.mSearchList.observe(viewLifecycleOwner, Observer {
+            HandleSuccesApiData(it)
+        })
+
+        mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
+            it?.errorMessage?.let {
+                handleErrorState(it)
+            }
+
+        })
+    }
+
+
+    /*
+    * Handles the success data from the api and loads the episode list from api
+    * into the recyclerview adapter.
+     * */
+    private fun HandleSuccesApiData(data: CharacterListResponse?) {
+        //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+        mIsDataLoading = false
+
+        data?.info?.next.let {
+            //if the check is true it means there are no more pages to load using pagination
+            if (it == null || it.isNullOrEmpty()) {
+                mIsLastPage = true
+                Log.e("LAST PAGE", "FOR PAGINATION")
+            } else {
+                mIsLastPage = false
+            }
+        }
+
+        data?.let {
+            it.results?.let {
+                if (mCurrentPage == 1) {
+
+                    /*
+                    * On first time loading of data if there is any empty list then make no data available text visible else hide.
+                    * */
+                    if (it.isEmpty()) {
+                        mBindingSearch?.txtError?.visibility = View.VISIBLE
+                    } else {
+                        mBindingSearch?.txtError?.visibility = View.GONE
+                    }
+
+
+                    //this code will execute for pull to refresh functionality
+                    mSearchAdapter.setListForPullToRefresh(it, mIsLastPage)
+                } else {
+                    //this code will execute for pagination when current page value is more than 1
+                    mSearchAdapter.addItemsForPagination(it, mIsLastPage)
+                }
+            }
+        }
+    }
+
+    /*
+  * Shows the error from API and Networks*/
+    private fun handleErrorState(errorMessage: String) {
+        mSearchAdapter.clearAdapter()
+
+
+        //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+        mIsDataLoading = false
+
+        /*
+       * as error is occured so we must decrement the page count by one,because it was incremented ,and we have
+       * not got the result yet, so to start the same api again we must decerement the page variable
+       */
+        mCurrentPage--
+
+        mSearchAdapter.resetLoadingFlag(false)
+
+
+        context?.let {
+            showToast(it, errorMessage)
+        }
     }
 
     override fun onLoadMore() {
@@ -179,9 +222,16 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
         }
     }
 
+    /*
+    * Recives the click item from the adapter view and then redirect it to their respective fragment.
+    * */
     override fun getDataFromAdapter(obj: Any?) {
+        hideKeyBoard(mBindingSearch?.root)
         val character = obj as CharacterItem
-        activity?.finish()
-        EventBus.getDefault().post(character)
+        val bundle = Bundle()
+        bundle.putParcelable(Constants.PARCEL_DATA, character)
+        val fragment = CharacterDetailFragment()
+        fragment.arguments = bundle
+        attachFragment(fragment, true)
     }
 }

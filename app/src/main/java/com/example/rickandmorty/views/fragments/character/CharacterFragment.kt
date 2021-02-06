@@ -13,15 +13,18 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.databinding.FragmentCharacterBinding
 import com.example.rickandmorty.models.CharacterItem
+import com.example.rickandmorty.models.CharacterListResponse
 import com.example.rickandmorty.utils.Constants
+import com.example.rickandmorty.utils.MulticlickHandler
 import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.activities.holder.HolderActivity
 import com.example.rickandmorty.views.fragments.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
+
+/*
+* This fragments manages rendering Character list UI through API.
+* */
 
 @AndroidEntryPoint
 class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
@@ -41,7 +44,6 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        EventBus.getDefault().register(this)
         mCharacterBinding = FragmentCharacterBinding.inflate(inflater, container, false)
         val view = mCharacterBinding?.root
         return view
@@ -51,15 +53,9 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         super.onViewCreated(view, savedInstanceState)
         init()
         attachObservers()
+        setListners()
         onRefresh()
-        mCharacterBinding?.edtCharName?.setOnClickListener {
-//            val charObj = obj as CharacterItem
-            val bundle = Bundle()
-//            bundle.putParcelable(Constants.PARCEL_DATA, charObj)
-            bundle.putInt(Constants.PARCEL_KEY, Constants.SEARCH)
-            startActivityFromFragment(activity, HolderActivity::class.java, bundle, false)
 
-        }
     }
 
     override fun onRefresh() {
@@ -83,9 +79,9 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     /*
-    * Initializing views.
+    * Initializing views and setting recyclerview adapter.
     * */
-    fun init() {
+    private fun init() {
 
         mCharacterBinding?.swipeRefresh?.setOnRefreshListener(this)
 
@@ -105,38 +101,26 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
 
 
     /*
+    * Setting listners on views.
+    * */
+    private fun setListners() {
+
+        mCharacterBinding?.edtCharName?.setOnClickListener {
+            if (MulticlickHandler.singleClick()) {
+                val bundle = Bundle()
+                bundle.putInt(Constants.PARCEL_KEY, Constants.SEARCH)
+                startActivityFromFragment(activity, HolderActivity::class.java, bundle, false)
+            }
+        }
+    }
+
+
+    /*
     * Attaching observers  to observe data from the viewmodels
     * */
-    fun attachObservers() {
+    private fun attachObservers() {
         mViewModel.mCharacterData.observe(viewLifecycleOwner, Observer {
-
-            //if pull to refresh is loading then cancel its loader
-            mCharacterBinding?.swipeRefresh?.isRefreshing = false
-
-            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
-            mIsDataLoading = false
-
-            it.info?.next.let {
-                //if the check is true it means there are no more pages to load using pagination
-                if (it == null || it.isNullOrEmpty()) {
-                    mIsLastPage = true
-                    Log.e("LAST PAGE", "FOR PAGINATION")
-                } else {
-                    mIsLastPage = false
-                }
-            }
-
-            it?.let {
-                it.results?.let {
-                    if (mCurrentPage == 1) {
-                        //this code will execute for pull to refresh functionality
-                        mCharacterAdapter.setListForPullToRefresh(it, mIsLastPage)
-                    } else {
-                        //this code will execute for pagination when current page value is more than 1
-                        mCharacterAdapter.addItemsForPagination(it, mIsLastPage)
-                    }
-                }
-            }
+            HandleSuccesApiData(it)
         })
 
         mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
@@ -146,9 +130,54 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         })
     }
 
+
+    /*
+    * Handles the succes data from the api and loads the character list from api
+    * into the recyclerview adapter.
+    * */
+    private fun HandleSuccesApiData(data: CharacterListResponse?) {
+        //if pull to refresh is loading then cancel its loader
+        mCharacterBinding?.swipeRefresh?.isRefreshing = false
+
+        //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+        mIsDataLoading = false
+
+        data?.info?.next.let {
+            //if the check is true it means there are no more pages to load using pagination
+            if (it == null || it.isNullOrEmpty()) {
+                mIsLastPage = true
+                Log.e("LAST PAGE", "FOR PAGINATION")
+            } else {
+                mIsLastPage = false
+            }
+        }
+
+        data?.let {
+            it.results?.let {
+                if (mCurrentPage == 1) {
+
+                    /*
+                    * On first time loading of data if there is any empty list then make no data available text visible else hide.
+                    * */
+                    if (it.isEmpty()) {
+                        mCharacterBinding?.txtError?.visibility = View.VISIBLE
+                    } else {
+                        mCharacterBinding?.txtError?.visibility = View.GONE
+                    }
+
+                    //this code will execute for pull to refresh functionality
+                    mCharacterAdapter.setListForPullToRefresh(it, mIsLastPage)
+                } else {
+                    //this code will execute for pagination when current page value is more than 1
+                    mCharacterAdapter.addItemsForPagination(it, mIsLastPage)
+                }
+            }
+        }
+    }
+
     /*
     * Shows the error from API and Networks*/
-    fun handleErrorState(errorMessage: String) {
+    private fun handleErrorState(errorMessage: String) {
         //if pull to refresh is loading then cancel its loader
         mCharacterBinding?.swipeRefresh?.isRefreshing = false
 
@@ -161,6 +190,7 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
        */
         mCurrentPage--
 
+        mCharacterAdapter.resetLoadingFlag(false)
 
         context?.let {
             showToast(it, errorMessage)
@@ -193,6 +223,9 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         }
     }
 
+    /*
+    * Recives the click item from the adapter view and then redirect it to their respective fragment.
+    * */
     override fun getDataFromAdapter(obj: Any?) {
 
         val charObj = obj as CharacterItem
@@ -203,17 +236,10 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: CharacterItem?) {
-        //getting character from search
-        getDataFromAdapter(event)
-    }
-
 
     override fun onDestroy() {
         super.onDestroy()
         mCharacterBinding = null
-        EventBus.getDefault().unregister(this)
     }
 
 

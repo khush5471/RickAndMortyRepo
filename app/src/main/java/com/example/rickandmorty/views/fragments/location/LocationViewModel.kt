@@ -1,19 +1,17 @@
 package com.example.rickandmorty.views.fragments.location
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.rickandmorty.models.LocationListResponse
-import com.example.rickandmorty.network.ApiError
+import com.example.rickandmorty.models.MyViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class LocationViewModel @Inject constructor(
     private val repository: LocationRepository
-) : ViewModel() {
+) : MyViewModel() {
 
     var mLocationData = MutableLiveData<LocationListResponse>()
-    var mApiError = MutableLiveData<ApiError>()
 
     /*Fetch location list*/
     fun getLoactionList(page: Int) {

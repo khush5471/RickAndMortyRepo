@@ -5,7 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarTop"
@@ -16,11 +18,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
+        android:padding="10dp"
         android:src="@drawable/ic_back_arrow"
         app:layout_constraintBottom_toBottomOf="@id/toolbarTop"
         app:layout_constraintStart_toStartOf="@id/toolbarTop"
@@ -31,9 +33,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
-        android:text="Details"
+        android:text="@string/details"
         android:textColor="@color/black"
-        android:textSize="25dp"
+        android:textSize="@dimen/toolbartext"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/toolbarTop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +72,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imgCharacter"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
@@ -97,7 +99,7 @@
                 android:maxLines="1"
                 android:text=""
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="@dimen/normaltext"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/txtStatus"
                 app:layout_constraintStart_toStartOf="@id/userImage"
@@ -109,8 +111,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:fontFamily="sans-serif-condensed"
-                android:text="$125"
                 android:textColor="@color/red"
+                android:textSize="@dimen/normaltext"
                 android:textStyle="bold|italic"
                 app:layout_constraintBottom_toBottomOf="@id/txtCharName"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -125,7 +127,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-condensed"
                 android:text=""
-                android:textSize="15sp"
+                android:textSize="@dimen/normaltext"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/txtCharName"
                 app:layout_constraintTop_toBottomOf="@id/txtCharName" />
@@ -134,8 +136,8 @@
                 android:id="@+id/txtCharSpecies"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="$125"
                 android:textColor="@color/green"
+                android:textSize="@dimen/normaltext"
                 android:textStyle="bold|italic"
                 app:layout_constraintBottom_toBottomOf="@id/txtGender"
                 app:layout_constraintEnd_toEndOf="@id/txtStatus"
@@ -149,7 +151,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/origin"
                 android:textColor="@color/dark_grey"
-                android:textSize="15sp"
+                android:textSize="@dimen/normaltext"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/txtCharName"
                 app:layout_constraintTop_toBottomOf="@id/txtGender" />
@@ -159,7 +161,6 @@
                 android:id="@+id/txtCharOrigin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
                 app:layout_constraintBottom_toBottomOf="@id/txtOrigin"
                 app:layout_constraintEnd_toEndOf="@id/txtStatus"
                 app:layout_constraintStart_toEndOf="@id/txtOrigin"
@@ -173,7 +174,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/location_"
                 android:textColor="@color/dark_grey"
-                android:textSize="15sp"
+                android:textSize="@dimen/normaltext"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/txtCharName"
                 app:layout_constraintTop_toBottomOf="@id/txtOrigin" />
@@ -183,7 +184,7 @@
                 android:id="@+id/txtCharLocation"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
+                android:textSize="@dimen/normaltext"
                 app:layout_constraintBottom_toBottomOf="@id/txtLocation"
                 app:layout_constraintEnd_toEndOf="@id/txtStatus"
                 app:layout_constraintStart_toEndOf="@id/txtLocation"
