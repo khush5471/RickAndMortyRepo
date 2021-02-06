@@ -1,6 +1,6 @@
-package com.example.rickandmorty.state
+package com.example.rickandmorty.network
 
-data class ErrorResponse(
+data class ApiError(
     var errorMessage: String? = null,
     var errorCode: Int? = null
 )

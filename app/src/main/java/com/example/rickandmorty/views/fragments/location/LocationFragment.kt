@@ -64,7 +64,7 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
             mLocationBinding?.swipeRefreshLocation?.isRefreshing = false
             context?.let {
                 if (isVisible) {
-                    Utils.showToast(it, getString(R.string.no_internet_message))
+                    showToast(it, getString(R.string.no_internet_message))
                 }
             }
         }
@@ -128,25 +128,33 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         })
 
         mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
-            //if pull to refresh is loading then cancel its loader
-            mLocationBinding?.swipeRefreshLocation?.isRefreshing = false
-
-            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
-            mIsDataLoading = false
-
-            /*
-            * as error is occured so we must decrement the page count by one,because it was incremented ,and we have
-            * not got the result yet, so to start the same api again we must decerement the page variable
-            */
-            mCurrentPage--
-
-            it?.apply {
-                context?.let {
-                    Utils.showToast(it, this.errorMessage)
-
-                }
+            it?.errorMessage?.let {
+                handleErrorState(it)
             }
         })
+    }
+
+    /*
+   * Shows the error from API and Networks*/
+    fun handleErrorState(errorMessage: String) {
+        //if pull to refresh is loading then cancel its loader
+        mLocationBinding?.swipeRefreshLocation?.isRefreshing = false
+
+        //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+        mIsDataLoading = false
+
+        /*
+        * as error is occured so we must decrement the page count by one,because it was incremented ,and we have
+        * not got the result yet, so to start the same api again we must decerement the page variable
+        */
+        mCurrentPage--
+
+
+        context?.let {
+            showToast(it, errorMessage)
+
+
+        }
     }
 
     override fun onLoadMore() {
@@ -164,7 +172,7 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
                 mIsDataLoading = false
                 mLocationAdapter.resetLoadingFlag(false)
                 context?.let {
-                    Utils.showToast(it, getString(R.string.no_internet_message))
+                    showToast(it, getString(R.string.no_internet_message))
                 }
             }
         }

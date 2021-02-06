@@ -5,7 +5,10 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.views.activities.BaseActivity
 import com.example.rickandmorty.views.fragments.character.CharacterDetailFragment
+import com.example.rickandmorty.views.fragments.search.SearchFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HolderActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +25,12 @@ class HolderActivity : BaseActivity() {
 
             Constants.CHARCTER_DETAIL -> {
                 val fragment = CharacterDetailFragment()
+                fragment.arguments = bundle
+                addFragment(fragment, false)
+            }
+
+            Constants.SEARCH -> {
+                val fragment = SearchFragment()
                 fragment.arguments = bundle
                 addFragment(fragment, false)
             }

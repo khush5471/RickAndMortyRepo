@@ -47,6 +47,14 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         init()
         attachObservers()
         onRefresh()
+        mCharacterBinding?.edtCharName?.setOnClickListener {
+//            val charObj = obj as CharacterItem
+            val bundle = Bundle()
+//            bundle.putParcelable(Constants.PARCEL_DATA, charObj)
+            bundle.putInt(Constants.PARCEL_KEY, Constants.SEARCH)
+            startActivityFromFragment(activity, HolderActivity::class.java, bundle, false)
+
+        }
     }
 
     override fun onRefresh() {
@@ -63,7 +71,7 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
             mCharacterBinding?.swipeRefresh?.isRefreshing = false
             context?.let {
                 if (isVisible) {
-                    Utils.showToast(it, getString(R.string.no_internet_message))
+                    showToast(it, getString(R.string.no_internet_message))
                 }
             }
         }
@@ -127,25 +135,33 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
         })
 
         mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
-            //if pull to refresh is loading then cancel its loader
-            mCharacterBinding?.swipeRefresh?.isRefreshing = false
-
-            //Make this flag to false so that new data can be loaded using pagination or pull to refresh
-            mIsDataLoading = false
-
-            /*
-           * as error is occured so we must decrement the page count by one,because it was incremented ,and we have
-           * not got the result yet, so to start the same api again we must decerement the page variable
-           */
-            mCurrentPage--
-
-            it?.apply {
-                context?.let {
-                    Utils.showToast(it, this.errorMessage)
-                }
+            it?.errorMessage?.let {
+                handleErrorState(it)
             }
-
         })
+    }
+
+    /*
+    * Shows the error from API and Networks*/
+    fun handleErrorState(errorMessage: String) {
+        //if pull to refresh is loading then cancel its loader
+        mCharacterBinding?.swipeRefresh?.isRefreshing = false
+
+        //Make this flag to false so that new data can be loaded using pagination or pull to refresh
+        mIsDataLoading = false
+
+        /*
+       * as error is occured so we must decrement the page count by one,because it was incremented ,and we have
+       * not got the result yet, so to start the same api again we must decerement the page variable
+       */
+        mCurrentPage--
+
+
+        context?.let {
+            showToast(it, errorMessage)
+        }
+
+
     }
 
 
@@ -166,7 +182,7 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
                 mIsDataLoading = false
                 mCharacterAdapter.resetLoadingFlag(false)
                 context?.let {
-                    Utils.showToast(it, getString(R.string.no_internet_message))
+                    showToast(it, getString(R.string.no_internet_message))
                 }
             }
         }

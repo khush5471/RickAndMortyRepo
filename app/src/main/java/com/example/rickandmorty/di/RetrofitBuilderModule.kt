@@ -52,4 +52,6 @@ object RetrofitBuilderModule {
     fun getServiceInstance(retrofit: Retrofit): WebService {
         return retrofit.create(WebService::class.java)
     }
+
+
 }

@@ -1,5 +1,6 @@
-package com.example.rickandmorty.views.fragments.character
+package com.example.rickandmorty.views.fragments.search
 
+import android.util.Log
 import com.example.rickandmorty.models.CharacterListResponse
 import com.example.rickandmorty.network.ApiError
 import com.example.rickandmorty.network.WebService
@@ -9,38 +10,44 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
+class SearchRepository @Inject constructor(private val mSerVice: WebService) {
 
-class CharacterRepository @Inject constructor(private val mService: WebService) {
+    private var mSearchRequest: Call<CharacterListResponse>? = null
 
-    /*
-    * Get list of cahracter from API
-    * */
-    fun getCharacterList(
+
+    fun searchCharacterByName(
         page: Int,
+        keyword: String,
         successHandler: (CharacterListResponse) -> Unit,
-        errorHandler: (ApiError) -> Unit,
+        errorHandler: (ApiError) -> Unit
     ) {
-        mService.getCharacterList(page).enqueue(object : Callback<CharacterListResponse> {
+        mSearchRequest = mSerVice.searchCharacterByName(page, keyword)
 
+        mSearchRequest?.enqueue(object : Callback<CharacterListResponse> {
 
             override fun onResponse(
                 call: Call<CharacterListResponse>,
                 response: Response<CharacterListResponse>
             ) {
+                if (!response.isSuccessful) {
+                    Log.e("ERRO CODES", " HANDL " + response.code() + " ++ " + response.message())
+                }
                 response.body()?.let {
                     successHandler(it)
                 } ?: Utils.handleErrorResponse(response, errorHandler)
-
             }
 
             override fun onFailure(call: Call<CharacterListResponse>, t: Throwable) {
+
                 errorHandler(ApiError("Connection failure, Something went wrong"))
+
             }
         })
-
-
     }
 
-
+    /*
+    * Cancel the previous request, so that new data result will be shown*/
+    fun cancelPreviousRequest() {
+        mSearchRequest?.cancel()
+    }
 }
-

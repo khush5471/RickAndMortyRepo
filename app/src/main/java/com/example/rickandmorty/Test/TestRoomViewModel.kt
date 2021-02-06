@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.rickandmorty.models.CharacterListResponse
-import com.example.rickandmorty.state.ErrorResponse
+import com.example.rickandmorty.network.ApiError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class TestRoomViewModel @Inject constructor(
 ) : ViewModel() {
 
     val mCharacterData = MutableLiveData<CharacterListResponse>()
-    val mApiError = MutableLiveData<ErrorResponse>()
+    val mApiError = MutableLiveData<ApiError>()
 
     fun testList(page: Int) {
         repository.getCharList(page)

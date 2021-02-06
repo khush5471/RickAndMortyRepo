@@ -16,18 +16,19 @@ interface WebService {
     ): Call<CharacterListResponse>
 
 
-    @GET("character")
-    suspend fun getCharacterLists(
-        @Query("page") page: Int
-    ): CharacterListResponse
-
     @GET("location")
-    suspend fun getLocationList(
+    fun getLocationList(
         @Query("page") page: Int
-    ): LocationListResponse
+    ): Call<LocationListResponse>
 
     @GET("episode")
-    suspend fun getEpisodeList(
+    fun getEpisodeList(
         @Query("page") page: Int
-    ): EpisodeListResponse
+    ): Call<EpisodeListResponse>
+
+    @GET("character")
+    fun searchCharacterByName(
+        @Query("page") page: Int,
+        @Query("name") name: String?
+    ): Call<CharacterListResponse>
 }

@@ -1,8 +1,10 @@
 package com.example.rickandmorty.views.fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.rickandmorty.R
 import com.example.rickandmorty.utils.Constants
@@ -35,5 +37,10 @@ open class BaseFragment : Fragment() {
                 )
             }
         }
+    }
+
+    /* Shows toast.*/
+    fun showToast(context: Context, message: String?) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }

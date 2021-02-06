@@ -14,5 +14,6 @@
     <string name="episode_">EPISODE -</string>
     <string name="origin">ORIGIN -</string>
     <string name="location_">LOCATION -</string>
+    <string name="search_by_name">Search by Name</string>
 
 </resources>
