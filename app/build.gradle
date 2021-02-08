@@ -55,6 +55,11 @@ android {
             buildConfigField 'String', 'BASE_URL','"https://rickandmortyapi.com/api/"'
         }
 
+        QA {
+            dimension "app"
+            buildConfigField 'String', 'BASE_URL','"https://rickandmortyapi.com/api/"'
+        }
+
     }
 
 }

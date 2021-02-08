@@ -12,8 +12,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.databinding.FragmentCharacterBinding
+import com.example.rickandmorty.di.RetrofitBuilderModule
 import com.example.rickandmorty.models.CharacterItem
 import com.example.rickandmorty.models.CharacterListResponse
+import com.example.rickandmorty.network.NetworkResult
 import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.utils.MulticlickHandler
 import com.example.rickandmorty.utils.Utils
@@ -120,14 +122,26 @@ class CharacterFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
     * */
     private fun attachObservers() {
         mViewModel.mCharacterData.observe(viewLifecycleOwner, Observer {
-            HandleSuccesApiData(it)
-        })
 
-        mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
-            it?.errorMessage?.let {
-                handleErrorState(it)
+            when (it) {
+
+                is NetworkResult.Success -> {
+                    it.data.let {
+                        HandleSuccesApiData(it)
+                    }
+                }
+
+                is NetworkResult.Failure -> {
+                    it.apply {
+                        context?.let {
+                            val error = RetrofitBuilderModule.handleApiError(this)
+                            handleErrorState(error)
+                        }
+                    }
+                }
             }
         })
+
     }
 
 

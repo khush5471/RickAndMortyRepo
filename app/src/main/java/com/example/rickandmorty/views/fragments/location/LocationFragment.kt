@@ -12,8 +12,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.LocationAdapter
 import com.example.rickandmorty.databinding.FragmentLocationBinding
+import com.example.rickandmorty.di.RetrofitBuilderModule
 import com.example.rickandmorty.models.LocationListResponse
 import com.example.rickandmorty.models.ResultsLocationItem
+import com.example.rickandmorty.network.NetworkResult
 import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.BaseFragment
 import com.example.rickandmorty.views.fragments.character.AdapterHandlerListner
@@ -98,14 +100,25 @@ class LocationFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener,
    * */
     private fun attachObservers() {
         mViewModel.mLocationData.observe(viewLifecycleOwner, Observer {
-            HandleSuccesApiData(it)
-        })
 
-        mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
-            it?.errorMessage?.let {
-                handleErrorState(it)
+            when (it) {
+                is NetworkResult.Success -> {
+                    it.data.let {
+                        HandleSuccesApiData(it)
+                    }
+                }
+
+                is NetworkResult.Failure -> {
+                    it.apply {
+                        context?.let {
+                            val error = RetrofitBuilderModule.handleApiError(this)
+                            handleErrorState(error)
+                        }
+                    }
+                }
             }
         })
+
     }
 
     /*

@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.SearchAdapter
 import com.example.rickandmorty.databinding.FragmentSearchBinding
+import com.example.rickandmorty.di.RetrofitBuilderModule
 import com.example.rickandmorty.models.CharacterItem
 import com.example.rickandmorty.models.CharacterListResponse
+import com.example.rickandmorty.network.NetworkResult
 import com.example.rickandmorty.utils.Constants
 import com.example.rickandmorty.utils.Utils
 import com.example.rickandmorty.views.fragments.BaseFragment
@@ -83,13 +85,24 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
 
         mBindingSearch?.edtCharName?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+
                 Log.e("TEXT ", "ok " + s.toString())
                 val searchKey = s.toString().trim()
                 mCurrentPage = 1
+
                 if (searchKey.isNotEmpty()) {
-                    mViewModel.getSearchedData(mCurrentPage, searchKey)
+                    context?.let {
+                        if (Utils.isNetworkAvailable(it)) {
+                            mViewModel.getSearchedData(mCurrentPage, searchKey)
+                        } else {
+                            showToast(it, getString(R.string.no_internet_message))
+                        }
+                    }
+
                 } else {
-                    mViewModel.cancelRequest()
+
+                    //cancel search request on clear of edittext.
+                    mViewModel.cancelSearchJob()
                     mSearchAdapter.clearAdapter()
                 }
             }
@@ -124,15 +137,28 @@ class SearchFragment : BaseFragment(), AdapterHandlerListner {
     * */
     private fun attachObservers() {
         mViewModel.mSearchList.observe(viewLifecycleOwner, Observer {
-            HandleSuccesApiData(it)
-        })
 
-        mViewModel.mApiError.observe(viewLifecycleOwner, Observer {
-            it?.errorMessage?.let {
-                handleErrorState(it)
+            when (it) {
+
+                is NetworkResult.Success -> {
+                    it.data.let {
+                        HandleSuccesApiData(it)
+                    }
+                }
+
+                is NetworkResult.Failure -> {
+                    it.apply {
+                        context?.let {
+                            val error = RetrofitBuilderModule.handleApiError(this)
+                            handleErrorState(error)
+                        }
+                    }
+                }
             }
 
         })
+
+
     }
 
 

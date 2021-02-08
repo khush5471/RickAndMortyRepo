@@ -1,13 +1,17 @@
 package com.example.rickandmorty.di
 
 import com.example.rickandmorty.BuildConfig
+import com.example.rickandmorty.network.NetworkResult
+import com.example.rickandmorty.network.Status
 import com.example.rickandmorty.network.WebService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -61,5 +65,36 @@ object RetrofitBuilderModule {
         return retrofit.create(WebService::class.java)
     }
 
+
+    // Handling error messages returned by Apis
+    fun handleApiError(
+        body: NetworkResult.Failure,
+    ): String {
+        val errorConverter: Converter<ResponseBody, Status> =
+            getRetroInstance()
+                .responseBodyConverter(Status::class.java, arrayOfNulls(0))
+
+        if (body.isNetworkError != null && body.isNetworkError) {
+            if (body.errorMessage != null && body.errorMessage.isNotEmpty()) {
+                return body.errorMessage
+            } else {
+                return "Something went wrong during network connection maybe internet is off."
+            }
+        } else {
+            try {
+                errorConverter.convert(body.errorBody)?.let {
+                    val error: Status = it
+                    return error.message
+                }
+                return "Api error"
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return "Something went wrong."
+            }
+        }
+        return ""
+
+
+    }
 
 }
